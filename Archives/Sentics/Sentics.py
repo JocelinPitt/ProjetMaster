@@ -1,3 +1,8 @@
+'''
+This script has been made in another class (see https://github.com/JocelinPitt/MusicOnto). The goal of this script is
+to perform Sentimental analysis with the help of spacy NLP function. This function require the s2v_reddit_2015_md file
+to perform her most_similar function. But this function was not called in this work and therefore the s2v file isn't here.
+'''
 # Importing the necessary python libraries
 import spacy
 import senticnet6 as sentic  # A module for sentiment analysis

@@ -1,3 +1,9 @@
+'''
+This script have been created to perform an embedding using Bert onto my own data. This is really close to what is done
+in the Y. Mehta's script but was written prior the choice of using his work to train a personality prediction model.
+
+'''
+
 import ktrain
 import numpy as np
 import pickle

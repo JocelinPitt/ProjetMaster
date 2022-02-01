@@ -1,3 +1,15 @@
+'''
+This script is an attempt to produce my own keras model. This version is the same as the All_together.py script but it
+works on the essays.csv files which are Pennebaker et al. files. Those files are the same that were finally used to
+train the models in the final version of this work.
+
+This model is a 3 entry model that tried to predict the personalities of fictional characters based on their speeches,
+The LIWC values and the Sentic values (sentimental analysis). It works on a MBTI classification
+
+this script have changed a lot and this version is only the last "as it is" version of it
+
+'''
+
 import pickle
 import numpy as np
 from keras_preprocessing.sequence import pad_sequences

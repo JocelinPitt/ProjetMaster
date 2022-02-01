@@ -1,3 +1,8 @@
+'''
+This is a simple script that read a csv and transform it into a folder of individual text file. This operation was done
+to get the LIWC value of the text. As the program that extract LIWC values take independent texts files as input.
+'''
+
 import pandas as pd
 from tqdm import tqdm
 

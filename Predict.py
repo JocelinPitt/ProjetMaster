@@ -5,13 +5,14 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import plot_confusion_matrix
 import matplotlib.pyplot as plt
 
+# Import the trained Keras models
 EXT = keras.models.load_model("Models/Second_models (Should Works)/model_EXT(5894)")
 NEU = keras.models.load_model("Models/Second_models (Should Works)/model_NEU(6194)")
 AGR = keras.models.load_model("Models/Second_models (Should Works)/model_AGR(6301)")
 CON = keras.models.load_model("Models/Second_models (Should Works)/model_CON(6194)")
 OPN = keras.models.load_model("Models/Second_models (Should Works)/model_OPN(6640)")
 
-
+# This function is taken from Y. Mehta Github. It open a pkl file and prepare it to be transferred to the MLP models.
 def get_inputs(layer, path):
     """Read data from pkl file and prepare for training."""
     file = open(
@@ -43,46 +44,43 @@ def get_inputs(layer, path):
 
     return inputs, full_targets
 
+# This path should be changed to match the pkl file you try to analyse
 path = r"Models/Second_models (Should Works)/Pickle Datas/psychopath-bert-base-cls-512_head.pkl"
 Input, targets = get_inputs('all', path)
 
-'''path_vil = "villain-bert-base-cls-512_head.pkl"
-path_her = "hero-bert-base-cls-512_head.pkl"
-
-Input_h, targets_h = get_inputs('all', path_her)
-Input_v, targets_v = get_inputs('all', path_vil)'''
-
+# Those lines transform the 0/1 target value to a 2 column dataframe, those are indicated for the following evaluate
+# methode
 EXT_tar = keras.utils.to_categorical(targets[:, 0], num_classes=2)
 NEU_tar = keras.utils.to_categorical(targets[:, 1], num_classes=2)
 AGR_tar = keras.utils.to_categorical(targets[:, 2], num_classes=2)
 CON_tar = keras.utils.to_categorical(targets[:, 3], num_classes=2)
 OPN_tar = keras.utils.to_categorical(targets[:, 4], num_classes=2)
 
+# Those calculate the evaluate score of the models on the new data we try to analyse
+# the output is a 3 values Tuple. [0] = the evaluation on loss, [1[ = the evaluation on accuracy
 EXTscore = EXT.evaluate(Input, EXT_tar, verbose = 0)
 NEUscore = NEU.evaluate(Input, NEU_tar, verbose = 0)
 ARGscore = AGR.evaluate(Input, AGR_tar, verbose = 0)
 CONscore = CON.evaluate(Input, CON_tar, verbose = 0)
 OPNscore = OPN.evaluate(Input, OPN_tar, verbose = 0)
 
+# Those lines try to predict for every row of the Input the presence or absence of a given OCEAN traits
 EXTpreds = EXT.predict(Input)
 NEUpreds = NEU.predict(Input)
 AGRpreds = AGR.predict(Input)
 CONpreds = CON.predict(Input)
 OPNpreds = OPN.predict(Input)
 
+# Those lines found the maximum value between the presence and absence of a trait and round this one to 1,
+# the other one is rounded down to 0
 EXTpredsRD = (EXTpreds == EXTpreds.max(axis=1)[:,None]).astype(int)
 NEUpredsRD = (NEUpreds == NEUpreds.max(axis=1)[:,None]).astype(int)
 AGRpredsRD = (AGRpreds == AGRpreds.max(axis=1)[:,None]).astype(int)
 CONpredsRD = (CONpreds == CONpreds.max(axis=1)[:,None]).astype(int)
 OPNpredsRD = (OPNpreds == OPNpreds.max(axis=1)[:,None]).astype(int)
 
-print(EXTpredsRD.sum(axis = 0))
-print(NEUpredsRD.sum(axis = 0))
-print(AGRpredsRD.sum(axis = 0))
-print(CONpredsRD.sum(axis = 0))
-print(OPNpredsRD.sum(axis = 0))
-
-'''cmEXT = confusion_matrix(targets[:,0].astype(int), EXTpredsRD[:,0])
+# those lines create the confusion matrix between the predicted values and the target values.
+cmEXT = confusion_matrix(targets[:,0].astype(int), EXTpredsRD[:,0])
 disp1 = ConfusionMatrixDisplay(confusion_matrix=cmEXT, display_labels=['1'])
 disp1.plot()
 plt.show()
@@ -105,4 +103,4 @@ plt.show()
 cmOPN = confusion_matrix(OPN_tar[:,1].astype(int), OPNpredsRD[:,0])
 disp5 = ConfusionMatrixDisplay(confusion_matrix=cmOPN)
 disp5.plot()
-plt.show()'''
+plt.show()

@@ -1,3 +1,16 @@
+'''
+This script is an attempt to produce my own keras model. This version is the same as the All_together.py script but it
+works on the essays.csv files which are Pennebaker et al. files. Those files are the same that were finally used to
+train the models in the final version of this work.
+
+This model is a 3 entry model that tried to predict the personalities of fictional characters based on their speeches,
+The LIWC values and the Sentic values (sentimental analysis). It works on a OCEAN classification, but has flaws that
+were never addressed has this approach has been dropped before i could fix them. (by exemple the output should not be:
+Output = keras.layers.Dense(1, activation='softmax')(Dense_2)
+
+this script have changed a lot and this version is only the last "as it is" version of it.
+'''
+
 import pickle
 import numpy as np
 from keras_preprocessing.sequence import pad_sequences
@@ -54,6 +67,10 @@ print('X Y sets')
 
 print(type(Pad_bert))
 
+'''
+The following part is an attempt to implement the StratifiedKFold method onto my own data
+'''
+
 skf = StratifiedKFold(n_splits=10, shuffle=False)
 for train_index, test_index in skf.split(pd_bert, Labels_cExt):
     x_train, x_test = pd_bert[train_index], pd_bert[test_index]
@@ -84,10 +101,12 @@ for train_index, test_index in skf.split(pd_bert, Labels_cExt):
         verbose=0,
     )
 
-
+'''
+This is the last version of the model that i've tried to build.
+'''
 # Model bert
 #input_bert = keras.layers.Dense(50, input_dim=(512, 768), name='Bert')
-'''
+
 input_bert = keras.layers.Input(shape=(512, 768), name='Bert')
 flat_bert = keras.layers.Flatten()(input_bert)
 Reduce_bert = keras.layers.Dense(512, activation='relu', name='Reduced_bert')(flat_bert)
@@ -116,7 +135,7 @@ model.get_layer('Reduced_bert').trainable = False
 model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               optimizer='Adadelta',
               metrics=["mse", "accuracy"])
-model.summary()'''
+model.summary()
 print("model made !")
 
 # Fit Model

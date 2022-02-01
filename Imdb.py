@@ -3,11 +3,15 @@ import Replacement
 from imdb import IMDb
 import pickle
 
+# Calling IMDBpy
 ia = IMDb()
 
+# Loading dataset and dictionary
 replacement_dic = Replacement.Replacement
 Data = pd.read_csv('Data/DATA_full.csv')
 
+# The following section works on the filename column. It separate the name of the movie and the name of the character
+# into two different columns
 Data_filename = Data['Filename']
 movies = []
 persons = []
@@ -26,9 +30,12 @@ for filename in Data_filename:
         person = ' '.join(x)
         persons.append(person[:-4])
 
+# This function add the newly created columns to de DF.
 Data['Movie'] = movies
 Data['Person'] = persons
 
+# This section is no longer useful as it was used during the creation of the replacement dictionary.
+# The goal here is to rename every movies to increased the chances of the following code to found a match.
 '''
 for movie in Data['Movie'].values:
     if movie not in replacement_dic.keys():
@@ -38,6 +45,9 @@ for movie in Data['Movie'].values:
         else:
             replacement_dic[movie] = movie
 '''
+
+# This section load the Cast data frame and another replacement dictionary which transform the roles name into a more
+# readable version
 Cast = pd.read_csv('Data/cast.csv')
 replacement_string = {"\Adv": "adversary",
                       "\Agn": "agent",
@@ -62,9 +72,12 @@ replacement_string = {"\Adv": "adversary",
                       "\Voi": "voice only, narrator",
                       "\Wmp": "wimp"}
 
+# The replacement dictionaries are applied here
 Cast['Role'] = Cast['Role'].replace(replacement_string)
 Data['Rep'] = Data['Movie'].replace(replacement_dic)
 
+# This section match the two dataframes based on their movie title. When the matching is done, we only keeps the
+# columns that contains the information that we need.
 Data['Rep'].apply(lambda x: x.title())
 Sub_data = Data[Data['Rep'].isin(Cast['Movie'].tolist())]
 Sub_cast = Cast[Cast['Movie'].isin(Sub_data['Rep'].tolist())]
@@ -73,18 +86,14 @@ Sm_subCast = Sub_cast[['Movie', 'Actor', 'Role']]
 
 Sm_subData['Person'] = Sm_subData['Person'].apply(lambda x: x.lower().title())
 
+# This variable contains a set of every movies
 Movies_list = set(Sub_data['Rep'].tolist())  # len 152
+
+# this variable contains only villain et heros.
 heroAndVillain = Sm_subCast[Sm_subCast['Role'].isin(['villain', 'hero'])]  # len 25
 
+# This is the last version of the script that try to match both dataframes
 Role_name = list()
-'''for movie, actor in zip(heroAndVillain['Movie'].tolist(), heroAndVillain['Actor'].tolist()):
-    Found = Sm_subData[Sm_subData['Rep'] == movie]
-    print([per for per in Found['Person']])
-    toadd = input(str(actor) + " in " + str(movie))
-    Role_name.append(toadd)
-
-with open('Df.pkl', 'rb') as f:
-    OUT_df = pickle.load(f)'''
 
 OUT_df = pd.DataFrame(columns=['Movie','Actor','Character','Speech','Role'])
 
@@ -92,22 +101,34 @@ for movie in set(Sm_subCast['Movie']):
     if movie not in set(OUT_df['Movie']):
         CastToFind = Sm_subCast[Sm_subCast['Movie'] == movie]
         DataToLink = Sm_subData[Sm_subData['Rep'] == movie]
+
+        # this function return a list of objects based on the movie title
         SearchMovie = ia.search_movie(movie)
         searchID = 0
+
+        # This part search for the movie
         for mov in SearchMovie:
+            # If the title is a perfect match
             if str(movie) == str(mov['title']):
                 break
+
+            # Otherwise the program ask for user validation
             else:
                 ok = input("Is: " + str(movie) + " = " + str(mov['title'] + str(mov['year']) + "\nEmpty=True"))
                 if not ok:
                     break
                 else:
                     searchID += 1
+
+        # This function get information about the movie using his Id. We get the id among the previous list
         getMovie = ia.get_movie(SearchMovie[searchID].movieID)
         print('Working on: ' + getMovie['title'])
         print([per for per in DataToLink['Person']])
+
+        # This will loop on every actor available in the UCI Dataset for a given movie
         for cast in CastToFind['Actor']:
             Character_name = str()
+            # The first thing to do is to get their character name as written in IMBD data base
             try:
                 People = ia.search_person(cast)[0].personID
                 getCast = ia.get_person(People)
@@ -116,124 +137,42 @@ for movie in set(Sm_subCast['Movie']):
                         if People != elem.personID:
                             pass
                         else:
-    
                             Character_name = elem.currentRole['name']
+
+                # If a character name was found
                 if Character_name:
+                    # If the character name is the same as the one in our data frame we save the information we need
+                    # in a variable called Output
                     if Character_name in DataToLink['Person'].to_list():
                         Output = [movie, cast, Character_name,
                                   DataToLink.loc[DataToLink['Person'] == Character_name, 'Speech'].values,
                                   CastToFind.loc[CastToFind['Actor'] == cast, 'Role'].values]
                     else:
+                        # Otherwise we try to split IMBD's name and try to match every part with the names we have
                         match = False
                         Part_Name = Character_name.split()
                         for part in Part_Name:
                             if part in DataToLink['Person'].to_list():
                                 match = True
+                                # If found : we save the information in the Output variable
                                 Output = [movie, cast, Character_name,
                                           DataToLink.loc[DataToLink['Person'] == part, 'Speech'],
                                           CastToFind.loc[CastToFind['Actor'] == cast, 'Role']]
+                        # If we still haven't match the character's name. The program will ask for the user's help
                         if not match:
                             print(str(Character_name) + " not found...")
-                            pass
-                            '''link = input(str(Character_name))
+                            link = input(str(Character_name))
                             if link:
                                 Output = [movie, cast, Character_name,
                                           DataToLink.loc[DataToLink['Person'] == link, 'Speech'],
                                           CastToFind.loc[CastToFind['Actor'] == cast, 'Role']]
                             else:
-                                pass'''
+                                pass
                     OUT_df.loc[len(OUT_df.index)] = Output
             except:
                 pass
         print("Done with :" + str(movie))
+        # The program save after every movie, because as the user is frequently ask to do some input this process can
+        # very very long.
         with open('Data/PKL files/Df.pkl', 'wb') as f:
             pickle.dump(OUT_df, f)
-
-'''for movie, actor in zip(heroAndVillain['Movie'].tolist(), heroAndVillain['Actor'].tolist()):
-    IaMovie = ia.get_movie(ia.search_movie(movie)[0].movieID)
-    IaPerson = ia.get_person(ia.search_person(actor)[0].personID)
-    count = 0
-    idx = int()
-    for pers in IaMovie['cast']:
-        if pers['name'] == IaPerson['name']:
-            idx = count
-        else:
-            count += 1
-
-for Movie in set(heroAndVillain['Movie'].tolist()):
-
-    _Ia_movie = ia.search_movie(Movie)
-    MovID = _Ia_movie[0].movieID
-    Ia_movie = ia.get_movie(MovID)
-    HerVil_catchList = heroAndVillain[heroAndVillain['Movie'] == str(Movie)]
-    for HerVil in HerVil_catchList['Actor']:
-        _Ia_actor = ia.search_person(HerVil)
-        ActID = _Ia_actor[0].personID
-        Ia_actor = ia.get_person(ActID)
-        if Ia_actor in Ia_movie:
-            count = 0
-            idx = int()
-            for pers in Ia_movie['cast']:
-                if pers['name'] == Ia_actor['name']:
-                    idx = count
-                else:
-                    count += 1
-            Role_name.append(Ia_movie['cast'][idx].currentRole['name'])
-        else:
-            print(Ia_actor['name'])
-            print("not in " + str(Ia_movie['title']))
-
-heroAndVillain['Person'] = Role_name
-
-Speeches = list()
-Movies = list()
-Persons = list()
-Roles = list()
-for index, row in heroAndVillain.iterrows():
-    catch = Sm_subData[(Sm_subData['Rep'] == row['Movie']) & (Sm_subData['Person'] == row['Person'])]
-    if not catch.empty:
-        Speeches.append(catch['Speech'].values[0])
-        Movies.append(row['Movie'])
-        Persons.append(row['Person'])
-        Roles.append(row['Role'])
-
-zipped = list(zip(Speeches, Movies, Persons, Roles))
-df = pd.DataFrame(zipped, columns=['Speeches', 'Movies', 'Persons', 'Roles'])
-
-# Hero = A.1 C.1 E.1 N.0 O.1
-# Vil = A.0 C.0 E.0 N.1 O.0
-O = list()
-C = list()
-E = list()
-A = list()
-N = list()
-for index, row in df.iterrows():
-    if row['Roles'] == 'villain':
-        O.append('n')
-        C.append('n')
-        E.append('n')
-        A.append('n')
-        N.append('y')
-    else:
-        O.append('y')
-        C.append('y')
-        E.append('y')
-        A.append('y')
-        N.append('n')
-
-cEXT = pd.Series(E)
-cNEU = pd.Series(N)
-cAGR = pd.Series(A)
-cCON = pd.Series(C)
-cOPN = pd.Series(O)
-
-df['cEXT'] = cEXT
-df['cNEU'] = cNEU
-df['cAGR'] = cAGR
-df['cCON'] = cCON
-df['cOPN'] = cOPN
-
-with open('DF_dump.pkl', 'wb') as f:
-    pickle.dump(df, f)
-
-to_keep = df[['Speeches','cEXT','cNEU','cAGR','cCON','cOPN']]'''

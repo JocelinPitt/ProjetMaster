@@ -1,12 +1,12 @@
 import pickle
 import pandas as pd
 
-with open('Data/PKL files/DF_dump.pkl', 'rb') as f:
-    df = pickle.load(f)
-
+# Import the data
 with open('Data/PKL files/Df.pkl', 'rb') as f:
     All_df = pickle.load(f)
 
+# During the process of making the Df.pkl file something went wrong with the IMDBpy
+# which ended up in a badly formatted DF. These next lines, rearrange the All_df to a much cleaner version of the DF.
 All_movie = []
 All_actor = []
 All_Character = []
@@ -33,6 +33,7 @@ Final_df['Character'] = All_Character
 Final_df['Speech'] = All_Speech
 Final_df['Role'] = All_Role
 
+# Those lines replace some artefacts that still appears in the "Role" column of the new Final_df DF.
 Repl_str = {'\\Und R:difficult older sister':'undetermined',
             '\\agt':'agent',
             '\\Agt':'agent',
@@ -40,43 +41,11 @@ Repl_str = {'\\Und R:difficult older sister':'undetermined',
             '\Voi\Her':'hero',
             '\\Und R:attractive high school sophomore':'undetermined',
             '\\Und R:worried father':'undetermined'}
-
 Final_df['Role'] = Final_df['Role'].replace(Repl_str)
 
-Data = pd.read_csv('Data/DATA_full.csv')
-
-Data_filename = Data['Filename']
-movies = []
-persons = []
-
-for filename in Data_filename:
-    x = filename.split(' ')
-    if len(x) == 2:
-        person = x[1][:-4].lower()
-        persons.append(person)
-        movie = x[0][:-4]
-        movies.append(movie)
-    else:
-        movie = x[0][:-4]
-        movies.append(movie)
-        x.pop(0)
-        person = ' '.join(x)
-        persons.append(person[:-4])
-
-Data['Movie'] = movies
-Data['Person'] = persons
-
-Leng = []
-for spe in Data['Speech'].values:
-    _len = len(spe)
-    Leng.append(_len)
-
-Data['Lenght'] = Leng
-
-UCI = pd.read_csv('Data/cast.csv')
-
-# Hero = A.1 C.1 E.1 N.0 O.1
-# Vil = A.0 C.0 E.0 N.1 O.0
+# The following lines produce the target values accordingly to the ontology made by Davide Picca. In which,
+# we can found the archetypal personality profile of an Hero and a villain, which are:
+# Hero = A.1 C.1 E.1 N.0 O.1 Vil = A.0 C.0 E.0 N.1 O.0
 O = list()
 C = list()
 E = list()
@@ -114,8 +83,11 @@ Final_df['cAGR'] = cAGR
 Final_df['cCON'] = cCON
 Final_df['cOPN'] = cOPN
 
+# This line make sure no duplicate exist in the Final data frame
 Final_df.drop_duplicates(inplace=True, ignore_index=True)
 
+# Those lines save, for every role, a Csv version of the Final_df, has Y. Mehta's script use csv as input to pass on
+# to the BERT transformer part of the models.
 for elem in set(Final_df['Role']):
     _temp_df = Final_df[Final_df['Role']==elem]
     _temp_df = _temp_df[['Speech','cEXT','cNEU','cAGR','cCON','cOPN']]

@@ -1,10 +1,13 @@
+'''
+This script is a Pseudo-label function that I tried to use to perform Pseudo-labeling onto my data.
+'''
 from sklearn.utils import shuffle
 import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin
 
 class PseudoLabeler(BaseEstimator, RegressorMixin):
  '''
- Sci-kit learn wrapper for creating pseudo-lebeled estimators.
+ Sci-kit learn wrapper for creating pseudo-labeled estimators.
  '''
 
  def __init__(self, model, unlabled_data, features, target, sample_rate=0.2, seed=42):

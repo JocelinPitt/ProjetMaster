@@ -1,3 +1,11 @@
+'''
+This script is an modified script from another class. It was adapted to compute Sentiment analysis in the same way as it
+is performed in the MusicOnto Package. (see https://github.com/JocelinPitt/MusicOnto)
+
+The Y. Mehta's personality detection GitHub also contains Sentics values for the Kaggle Dataset MBTI by Mitchell J.
+Therefore this script and the results were discarded.
+As those produce by Y. Mehta were more accurate and reliable than mine.
+'''
 import pickle
 from Sentics import Sentics
 import re

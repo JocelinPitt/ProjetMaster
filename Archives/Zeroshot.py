@@ -1,3 +1,7 @@
+'''
+This is an small attempt to perform Zero-shot learning onto my data, using the Ktrain package.
+This approach simply doesn't work for personality detection.
+'''
 import os
 import ktrain
 import pandas as pd
