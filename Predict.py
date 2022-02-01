@@ -57,7 +57,7 @@ CON_tar = keras.utils.to_categorical(targets[:, 3], num_classes=2)
 OPN_tar = keras.utils.to_categorical(targets[:, 4], num_classes=2)
 
 # Those calculate the evaluate score of the models on the new data we try to analyse
-# the output is a 3 values Tuple. [0] = the evaluation on loss, [1[ = the evaluation on accuracy
+# the output is a 3 values Tuple. [0] = the evaluation on loss, [1] = the evaluation on accuracy
 EXTscore = EXT.evaluate(Input, EXT_tar, verbose = 0)
 NEUscore = NEU.evaluate(Input, NEU_tar, verbose = 0)
 ARGscore = AGR.evaluate(Input, AGR_tar, verbose = 0)
