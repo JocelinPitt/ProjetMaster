@@ -123,6 +123,9 @@ for movie in set(Sm_subCast['Movie']):
         # This function get information about the movie using his Id. We get the id among the previous list
         getMovie = ia.get_movie(SearchMovie[searchID].movieID)
         print('Working on: ' + getMovie['title'])
+
+        # The program will print the list of characters present in the Data DF.
+        # This will be use full if the program doesn't get automatically a match
         print([per for per in DataToLink['Person']])
 
         # This will loop on every actor available in the UCI Dataset for a given movie

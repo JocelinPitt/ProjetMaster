@@ -1,3 +1,7 @@
+'''
+This file is an modified version of the work of Y. Mehta. See the README file for more information.
+'''
+
 import numpy as np
 import pandas as pd
 import re
@@ -30,9 +34,9 @@ class MyMapDataset(Dataset):
             )
         elif dataset == 'MyData':
 
-            ## You should add your own path the embedded data here
+            #TODO: You should add your own path to your embedded data here
 
-            datafile = "data/CSV/psychopath.csv"
+            datafile = "YOUR/PATH/HERE.csv"
             author_ids, input_ids, targets = dataset_processors.essays_embeddings(
                 datafile, tokenizer, token_length, mode
             )

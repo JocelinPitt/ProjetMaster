@@ -5,3 +5,5 @@ It includes attempt based on various technics, such as : Bert implementations, S
 
 Those files are not supposed to work properly as they are work in progress files. Many have been modified, overwritten and/or left "as it is".
 They have been placed here as a display of the many (Failed) attempts done conducting this work.
+
+The files have been classified according to the techniques and tools they use. 

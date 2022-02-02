@@ -1,3 +1,6 @@
+'''
+This file is an modified version of the work of Y. Mehta. See the README file for more information.
+'''
 import os
 import sys
 
@@ -23,8 +26,7 @@ import utils.gen_utils as utils
 def get_inputs(inp_dir, dataset, embed, embed_mode, mode, layer):
     """Read data from pkl file and prepare for training."""
     file = open(
-        r"C:\Users\jinpi\PycharmProjects\personality-prediction\pkl_data\essays-bert-base-cls-512_head.pkl", "rb"
-        #inp_dir + dataset + "-" + embed + "-" + embed_mode + "-" + mode + ".pkl", "rb"
+        inp_dir + dataset + "-" + embed + "-" + embed_mode + "-" + mode + ".pkl", "rb"
     )
     data = pickle.load(file)
     author_ids, data_x, data_y = list(zip(*data))
@@ -92,6 +94,8 @@ def training(dataset, inputs, full_targets):
             k += 1
             model.compile(
                 optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                # You can change the value of from_logits to False,
+                # if you do, be sure to add a final layer to your models
                 loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
                 metrics=["mse", "accuracy"],
             )
@@ -103,11 +107,14 @@ def training(dataset, inputs, full_targets):
                 validation_data=(x_test, y_test),
                 verbose=0,
             )
-
             expdata["acc"].append(100 * max(history.history["val_accuracy"]))
-            model.save(r'C:\Users\jinpi\PycharmProjects\personality-prediction\checkpoint\model' + str(count_label) + "_" + str(count_model) )
-            count_model +=1
-        count_label +=1
+            '''
+            This is where the models are saved. Be sure to add a checkpoint directory in the same directory of this file
+            or to change the path to where you want to save your models.
+            '''
+            model.save(r'\checkpoint\model' + str(count_label) + "_" + str(count_model))
+            count_model += 1
+        count_label += 1
 
     df = pd.DataFrame.from_dict(expdata)
     return df

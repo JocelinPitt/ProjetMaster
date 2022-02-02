@@ -6,10 +6,15 @@ from sklearn.metrics import plot_confusion_matrix
 import matplotlib.pyplot as plt
 
 # Import the trained Keras models
+# Extroversion
 EXT = keras.models.load_model("Models/Second_models (Should Works)/model_EXT(5894)")
+# Neuroticism
 NEU = keras.models.load_model("Models/Second_models (Should Works)/model_NEU(6194)")
+# Agreeableness
 AGR = keras.models.load_model("Models/Second_models (Should Works)/model_AGR(6301)")
+# Contentiousness
 CON = keras.models.load_model("Models/Second_models (Should Works)/model_CON(6194)")
+# Openness
 OPN = keras.models.load_model("Models/Second_models (Should Works)/model_OPN(6640)")
 
 # This function is taken from Y. Mehta Github. It open a pkl file and prepare it to be transferred to the MLP models.
@@ -80,26 +85,31 @@ CONpredsRD = (CONpreds == CONpreds.max(axis=1)[:,None]).astype(int)
 OPNpredsRD = (OPNpreds == OPNpreds.max(axis=1)[:,None]).astype(int)
 
 # those lines create the confusion matrix between the predicted values and the target values.
+# For the Extroversion trait
 cmEXT = confusion_matrix(targets[:,0].astype(int), EXTpredsRD[:,0])
 disp1 = ConfusionMatrixDisplay(confusion_matrix=cmEXT, display_labels=['1'])
 disp1.plot()
 plt.show()
 
+# For the Neuroticism trait
 cmNEU = confusion_matrix(targets[:,1].astype(int), NEUpredsRD[:,0])
 disp2 = ConfusionMatrixDisplay(confusion_matrix=cmNEU, display_labels=['1'])
 disp2.plot()
 plt.show()
 
+# For the Agreeableness trait
 cmAGR = confusion_matrix(targets[:,2].astype(int), AGRpredsRD[:,0])
 disp3 = ConfusionMatrixDisplay(confusion_matrix=cmAGR)
 disp3.plot()
 plt.show()
 
+# For the Consciousness trait
 cmCON = confusion_matrix(targets[:,3].astype(int), CONpredsRD[:,0])
 disp4 = ConfusionMatrixDisplay(confusion_matrix=cmCON)
 disp4.plot()
 plt.show()
 
+# For the Openness trait
 cmOPN = confusion_matrix(OPN_tar[:,1].astype(int), OPNpredsRD[:,0])
 disp5 = ConfusionMatrixDisplay(confusion_matrix=cmOPN)
 disp5.plot()

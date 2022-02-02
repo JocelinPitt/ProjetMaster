@@ -1,5 +1,7 @@
 '''
-This script is a Pseudo-label function that I tried to use to perform Pseudo-labeling onto my data.
+This script is a Pseudo-label function that I tried to use to perform Pseudo-labeling onto my data. This function can also
+be found in the files in PseudoLabel directory of my Google Colabs Attempts. This is file is only meant to be called in other
+file. Unfortunately those calls where overwrite during the process of this work.
 '''
 from sklearn.utils import shuffle
 import pandas as pd

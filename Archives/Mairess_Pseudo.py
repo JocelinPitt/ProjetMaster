@@ -1,6 +1,6 @@
 '''
 This script is an attempt to perform pseudo-labeling onto my dataset. This file calls the Pseudo_Label_class.py.
-This attempt wasn't considered for a long and therefore a lot of errors are still present in here.
+This attempt wasn't considered for long and therefore a lot of errors are still present in here.
 '''
 
 import Pseudo_Label_class as Psdo

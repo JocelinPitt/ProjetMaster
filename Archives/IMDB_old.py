@@ -1,7 +1,9 @@
-'''Those are discarded codes made to perform the same output as the Imdb.py script
+'''
+Those are discarded codes made to perform the same output as the Imdb.py script
 This part was used to reload the OUT_df file as this process can be very long and could not be done in a single
 time Others changes were in place at that time but those no longer exists as they have been removed since this
-process is done.'''
+process is done.
+'''
 for movie, actor in zip(heroAndVillain['Movie'].tolist(), heroAndVillain['Actor'].tolist()):
     Found = Sm_subData[Sm_subData['Rep'] == movie]
     print([per for per in Found['Person']])

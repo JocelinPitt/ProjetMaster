@@ -1,3 +1,6 @@
+'''
+This file has been made only to get somme information about the dataframe I was working on. Like the size or the length
+'''
 import pandas as pd
 
 # Load the original data. Those data were loaded to get some information about them using the python console.

@@ -71,12 +71,14 @@ for index, row in Final_df.iterrows():
         A.append('n')
         N.append('n')
 
+# Transform the list into Pandas Series
 cEXT = pd.Series(E)
 cNEU = pd.Series(N)
 cAGR = pd.Series(A)
 cCON = pd.Series(C)
 cOPN = pd.Series(O)
 
+# Add those Series to the Final_df dataframe
 Final_df['cEXT'] = cEXT
 Final_df['cNEU'] = cNEU
 Final_df['cAGR'] = cAGR

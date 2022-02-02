@@ -1,3 +1,6 @@
+'''
+This file is an modified version of the work of Y. Mehta. See the README file for more information.
+'''
 import numpy as np
 import pandas as pd
 import re
@@ -73,7 +76,10 @@ def essays_embeddings(datafile, tokenizer, token_length, mode):
 
     df.sort_values(by=["token_len", "user"], inplace=True, ascending=True)
     tmp_df = df["user"]
-    tmp_df.to_csv("data/essays/Heros_author_id_order.csv", index_label="order")
+
+    #TODO: Modifying this will change the name of the file that connect your data IDs with their values.
+
+    tmp_df.to_csv("data/essays/YOUR-CHOOSED_NAME_HERE_id_order.csv", index_label="order")
     print(df["token_len"].mean())
 
     for ii in range(len(df)):
